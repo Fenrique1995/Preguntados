@@ -1,5 +1,6 @@
 import pygame
 import sys
+from constantes import *
 from datos import lista  # Importar preguntas desde datos.py
 
 # Helper function to check if a point is inside a rectangle
@@ -17,8 +18,8 @@ pygame.display.set_caption("Juego de Preguntas y Respuestas")
 
 # Colores
 white = (255, 255, 255)
-blue = (0, 0, 255)
-red = (255, 0, 0)
+blue = COLOR_AZUL
+red = COLOR_ROJO
 black = (0, 0, 0)
 
 # Fuente de texto
@@ -31,12 +32,19 @@ preguntas = lista  # Utilizar las preguntas de datos.py
 boton_pregunta_rect = pygame.Rect(50, 500, 150, 50)
 boton_reiniciar_rect = pygame.Rect(250, 500, 150, 50)
 
+# Coordenadas y dimensiones de los botones de opciones
+opcion_rects = [
+    pygame.Rect(50, 150, 600, 50),
+    pygame.Rect(50, 200, 600, 50),
+    pygame.Rect(50, 250, 600, 50)
+]
+
 # Función para mostrar la pregunta y opciones
 def mostrar_pregunta():
-    global preguntas  # Make the variable global
+    #global preguntas  # Make the variable global
     screen.fill(white)  # Clear the screen
     if current_question_index < len(preguntas):
-        pregunta_text = font.render(preguntas[current_question_index]["pregunta"], True, black)
+        pregunta_text = font.render(preguntas[current_question_index]['pregunta'], True, black)
         screen.blit(pregunta_text, (50, 50))
 
         opciones = [
@@ -67,7 +75,7 @@ def mostrar_pregunta():
 # Función para verificar la respuesta
 def verificar_respuesta(opcion_seleccionada):
     if current_question_index < len(preguntas):
-        respuesta_correcta = preguntas[current_question_index]["correcta"]
+        respuesta_correcta = preguntas[current_question_index]['correcta']
         if opcion_seleccionada == respuesta_correcta:
             return True
     return False
@@ -98,30 +106,44 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-            if is_inside_rect(mouse_pos, boton_pregunta_rect):
-                # Lógica para manejar el clic en el botón "Pregunta"
-                if current_question_index < len(preguntas) and chances > 0:
-                    for i, opcion_rect in enumerate(opcion_rects):
-                        if is_inside_rect(mouse_pos, opcion_rect):
-                            opcion_seleccionada = chr(97 + i)  # Convierte 0, 1 en 'a', 'b', 'c'
-                            print("Opción seleccionada:", opcion_seleccionada)  # Agrega esta línea
+            print("Mouse Clicked at:", mouse_pos)
+
+            for i, opcion_rect in enumerate(opcion_rects):
+                if is_inside_rect(mouse_pos, opcion_rect):
+                    opcion_seleccionada = chr(97 + i)  # Convierte 0, 1 en 'a', 'b', 'c'
+                    print("Opción seleccionada:", opcion_seleccionada)
+
+                    if verificar_respuesta(opcion_seleccionada):
+                        score += 10
+
+                    current_question_index += 1
+                    opcion_seleccionada = None  # Reiniciar la opción seleccionada
+
+                    opcion_rects = mostrar_pregunta()  # Mostrar la siguiente pregunta
+
+                elif is_inside_rect(mouse_pos, boton_reiniciar_rect):
+                # Lógica para manejar el clic en el botón "Reiniciar"
+                    reset_game()
+                    opcion_seleccionada = None  # Reiniciar la opción seleccionada
+                opcion_rects = mostrar_pregunta()  # Vuelve a mostrar la primera pregunta
+                running = True
+
 
                 if verificar_respuesta(opcion_seleccionada):
                     score += 10
-                    current_question_index += 1
-                    opcion_seleccionada = None  # Reiniciar la opción seleccionada
 
                 current_question_index += 1
                 opcion_seleccionada = None  # Reiniciar la opción seleccionada
 
-
                 opcion_rects = mostrar_pregunta()  # Mostrar la siguiente pregunta
 
-            elif is_inside_rect(mouse_pos, boton_reiniciar_rect):
-                # Lógica para manejar el clic en el botón "Reiniciar"
-                reset_game()
-                opcion_seleccionada = None  # Reiniciar la opción seleccionada
-                opcion_rects = mostrar_pregunta()  # Vuelve a mostrar la primera pregunta
+            if is_inside_rect(mouse_pos, boton_pregunta_rect):
+                # Lógica para manejar el clic en el botón "Pregunta"
+                if current_question_index < len(preguntas) and chances > 0:
+                    # Aquí deberías poner la lógica para mostrar la respuesta, como en tu código original.
+                    pass
+
+                # Después de mostrar la respuesta, puedes avanzar a la siguiente pregunta o realizar otras acciones.
 
     # Muestra el puntaje en el centro de la pantalla
     score_text = font.render(f"Score: {score}", True, black)
