@@ -3,7 +3,7 @@ import sys
 from constantes import *
 from datos import lista  # Importar preguntas desde datos.py
 
-# Helper function to check if a point is inside a rectangle
+# Esta funcion me ayuda a ver su el punto sobre el que hago click esta dentro del rectangulo
 def is_inside_rect(point, rect):
     x, y = point
     return rect.left < x < rect.right and rect.top < y < rect.bottom
@@ -41,8 +41,8 @@ opcion_rects = [
 
 # Función para mostrar la pregunta y opciones
 def mostrar_pregunta():
-    #global preguntas  # Make the variable global
-    screen.fill(white)  # Clear the screen
+    global current_question_index, score, chances
+    screen.fill(white)  # Limpia la pantalla
     if current_question_index < len(preguntas):
         pregunta_text = font.render(preguntas[current_question_index]['pregunta'], True, black)
         screen.blit(pregunta_text, (50, 50))
@@ -59,7 +59,7 @@ def mostrar_pregunta():
             screen.blit(opcion_text, opcion_rect.topleft)
             opcion_rects.append(opcion_rect)  # Agregar rectángulo a la lista
 
-        pygame.draw.rect(screen, blue, boton_pregunta_rect)  # Redraw the buttons
+        pygame.draw.rect(screen, blue, boton_pregunta_rect)  # Redibuja los botones
         pygame.draw.rect(screen, red, boton_reiniciar_rect)
         texto_pregunta = font.render("Pregunta", True, white)
         texto_reiniciar = font.render("Reiniciar", True, white)
@@ -71,6 +71,7 @@ def mostrar_pregunta():
         # No hay más preguntas, volver a la primera pregunta
         reset_game()
         return mostrar_pregunta()
+
 
 # Función para verificar la respuesta
 def verificar_respuesta(opcion_seleccionada):
@@ -84,7 +85,6 @@ def verificar_respuesta(opcion_seleccionada):
 def reset_game():
     global current_question_index, score, chances
     current_question_index = 0
-    score = 0
     chances = 2
 
 # Inicializar variables
@@ -116,7 +116,9 @@ while running:
                     if verificar_respuesta(opcion_seleccionada):
                         score += 10
 
+                    # Actualiza la pregunta cuando se hace clic en el botón "Pregunta"
                     current_question_index += 1
+
                     opcion_seleccionada = None  # Reiniciar la opción seleccionada
 
                     opcion_rects = mostrar_pregunta()  # Mostrar la siguiente pregunta
@@ -124,13 +126,13 @@ while running:
                 elif is_inside_rect(mouse_pos, boton_reiniciar_rect):
                 # Lógica para manejar el clic en el botón "Reiniciar"
                     reset_game()
+                    score = 0
                     opcion_seleccionada = None  # Reiniciar la opción seleccionada
                 opcion_rects = mostrar_pregunta()  # Vuelve a mostrar la primera pregunta
                 running = True
 
-
-                if verificar_respuesta(opcion_seleccionada):
-                    score += 10
+            if verificar_respuesta(opcion_seleccionada):
+                score += 10
 
                 current_question_index += 1
                 opcion_seleccionada = None  # Reiniciar la opción seleccionada
@@ -140,7 +142,8 @@ while running:
             if is_inside_rect(mouse_pos, boton_pregunta_rect):
                 # Lógica para manejar el clic en el botón "Pregunta"
                 if current_question_index < len(preguntas) and chances > 0:
-                    # Aquí deberías poner la lógica para mostrar la respuesta, como en tu código original.
+                    # Aquí avanza en la lista con las preguntas sumando uno al index
+                    current_question_index += 1
                     pass
 
                 # Después de mostrar la respuesta, puedes avanzar a la siguiente pregunta o realizar otras acciones.
