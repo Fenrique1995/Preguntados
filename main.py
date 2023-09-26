@@ -70,10 +70,9 @@ def mostrar_pregunta():
         screen.fill(gray)
         pregunta_text = font.render("Game Over", True, black)
         screen.blit(pregunta_text, (50, 50))
-        pygame.draw.rect(screen, red, boton_reiniciar_rect)  # Redibuja el botón "Reiniciar"
+        pygame.draw.rect(screen, COLOR_VERDE, boton_reiniciar_rect)  # Redibuja el botón "Reiniciar"
         texto_reiniciar = font.render("Reiniciar", True, black)
         screen.blit(texto_reiniciar, (260, 515))
-        opcion_rects
     else:
         # Se respondieron todas las preguntas
         screen.fill(gray)
@@ -161,11 +160,13 @@ while running:
                     opcion_seleccionada = None
                     current_question_index = 0
                     opcion_rects = mostrar_pregunta()
-                if chances <= 0:
-                        reset_game()
-                        opcion_seleccionada = None
-                        current_question_index = 0
-                        opcion_rects = mostrar_pregunta()
+
+            if chances <= 0:
+                if is_inside_rect(mouse_pos, boton_reiniciar_rect):
+                    reset_game()
+                    opcion_seleccionada = None
+                    current_question_index = 0
+                    opcion_rects = mostrar_pregunta()
 
     # Muestra el puntaje en el centro de la pantalla
     score_text = font.render(f"Score: {score}", True, black)
