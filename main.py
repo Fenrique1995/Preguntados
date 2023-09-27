@@ -1,3 +1,4 @@
+#Enrique S. Fernandez
 import pygame
 import sys
 from constantes import *
@@ -20,6 +21,7 @@ pygame.display.set_caption("Juego de Preguntas y Respuestas")
 gray = COLOR_GRIS
 blue = COLOR_AZUL
 red = COLOR_ROJO
+green = COLOR_VERDE
 black = (0, 0, 0)
 
 # Fuente de texto
@@ -70,7 +72,7 @@ def mostrar_pregunta():
         screen.fill(gray)
         pregunta_text = font.render("Game Over", True, black)
         screen.blit(pregunta_text, (50, 50))
-        pygame.draw.rect(screen, COLOR_VERDE, boton_reiniciar_rect)  # Redibuja el botón "Reiniciar"
+        pygame.draw.rect(screen, green, boton_reiniciar_rect)  # Redibuja el botón "Reiniciar"
         texto_reiniciar = font.render("Reiniciar", True, black)
         screen.blit(texto_reiniciar, (260, 515))
     else:
